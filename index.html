@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
 
     <style>
-        html,body,#app {
+        html, body, #app {
             min-height: 100vh;
         }
+
         .bg-primary {
             background: var(--primary) !important;
         }
@@ -96,11 +97,13 @@
             this.isScreen = this.$route.query.screen !== undefined;
             if (this.isScreen)
                 this.interval = setInterval(() => {
+                    this.finished = localStorage.getItem('finished') === "true";
+                    if (this.finished)
+                        return;
                     this.topic = localStorage.getItem('topic') ? localStorage.getItem('topic') : '';
                     this.upvote = localStorage.getItem('upvote') ? parseInt(localStorage.getItem('upvote')) : 0;
                     this.downvote = localStorage.getItem('downvote') ? parseInt(localStorage.getItem('downvote')) : 0;
                     this.neutralvote = localStorage.getItem('neutralvote') ? parseInt(localStorage.getItem('neutralvote')) : 0;
-                    this.finished = localStorage.getItem('finished') === "true";
                     this.time = moment().format("HH:mm:ss");
                 }, 1000);
             else {
