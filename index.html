@@ -93,10 +93,10 @@
             this.isScreen = this.$route.query.screen !== undefined;
             if (this.isScreen)
                 this.interval = setInterval(() => {
-                    this.topic = localStorage.getItem('topic') ?? '';
-                    this.upvote = parseInt(localStorage.getItem('upvote')) ?? 0;
-                    this.downvote = parseInt(localStorage.getItem('downvote')) ?? 0;
-                    this.neutralvote = parseInt(localStorage.getItem('neutralvote')) ?? 0;
+                    this.topic = localStorage.getItem('topic') ? localStorage.getItem('topic') : '';
+                    this.upvote = localStorage.getItem('upvote') ? parseInt(localStorage.getItem('upvote')) : 0;
+                    this.downvote = localStorage.getItem('downvote') ? parseInt(localStorage.getItem('downvote')) : 0;
+                    this.neutralvote = localStorage.getItem('neutralvote') ? parseInt(localStorage.getItem('neutralvote')) : 0;
                     this.finished = localStorage.getItem('finished') === "true";
                     this.time = moment().format("HH:mm:ss");
                 }, 1000);
