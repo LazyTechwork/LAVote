@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru_RU" class="h-100">
+<html lang="ru_RU">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +9,16 @@
     <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
 
     <style>
+        html,body,#app {
+            min-height: 100vh;
+        }
         .bg-primary {
             background: var(--primary) !important;
         }
     </style>
 </head>
-<body class="h-100">
-<div id="app" class="h-100 d-flex flex-column align-items-center justify-content-center bg-primary text-white">
+<body>
+<div id="app" class="py-5 d-flex flex-column align-items-center justify-content-center bg-primary text-white">
     <div class="row w-100">
         <div class="col-md-6 mx-auto" v-if="!isScreen">
             <h2 class="font-weight-bold text-center">Система голосования Ассоциации лицеистов</h2>
