@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru_RU" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ассоциация Лицеистов | Голосование</title>
+
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
+
+    <style>
+        .bg-primary {
+            background: var(--primary) !important;
+        }
+    </style>
+</head>
+<body class="h-100">
+<div id="app" class="h-100 d-flex flex-column align-items-center justify-content-center bg-primary text-white">
+    <div class="row w-100">
+        <div class="col-md-6 mx-auto" v-if="!isScreen">
+            <h2 class="font-weight-bold text-center">Система голосования Ассоциации лицеистов</h2>
+            <br>
+            <form action="#" class="mb-4">
+                <label for="topic">Тема голосования</label>
+                <input v-model="topic" type="text" class="form-control bg-primary text-white w-100 mb-3" id="topic">
+                <label for="upvote">Количество голосов &laquo;За&raquo;</label>
+                <input v-model="upvote" type="number" min="0" max="500"
+                       class="form-control bg-primary text-white w-100 mb-3" id="upvote">
+                <label for="downvote">Количество голосов &laquo;Против&raquo;</label>
+                <input v-model="downvote" type="number" min="0" max="500"
+                       class="form-control bg-primary text-white w-100 mb-3" id="downvote">
+                <label for="neutralvote">Количество голосов &laquo;Воздерживаюсь&raquo;</label>
+                <input v-model="neutralvote" type="number" min="0" max="500"
+                       class="form-control bg-primary text-white w-100 mb-3" id="neutralvote">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" v-model="finished" class="custom-control-input" id="finished">
+                    <label class="custom-control-label" for="finished">Завершить голосование</label>
+                </div>
+            </form>
+
+            <a :href="$route.path + '?screen'" class="btn btn-outline-light w-100" target="_blank">Экран голосования</a>
+        </div>
+
+        <div class="col-md-8 mx-auto text-center" v-if="isScreen">
+            <h3 class="font-weight-bold">Голосование Ассоциации лицеистов</h3>
+            <h3>{{ topic }}</h3>
+            <h4>{{ time }}</h4>
+            <br><br>
+            <table class="h1 w-100">
+                <tr>
+                    <td class="w-50 px-4 text-right">За</td>
+                    <td class="w-50 px-4 text-left">{{ upvote }} ({{ upvoteperc }}%)</td>
+                </tr>
+                <tr>
+                    <td class="w-50 px-4 text-right">Против</td>
+                    <td class="w-50 px-4 text-left">{{ downvote }} ({{ downvoteperc }}%)</td>
+                </tr>
+                <tr>
+                    <td class="w-50 px-4 text-right">Воздержалось</td>
+                    <td class="w-50 px-4 text-left">{{ neutralvote }} ({{ neutralvoteperc }}%)</td>
+                </tr>
+                <tr>
+                    <td class="w-50 px-4 text-right">Голосовало</td>
+                    <td class="w-50 px-4 text-left">{{ totalvotes }}</td>
+                </tr>
+            </table>
+            <h1 v-if="finished" class="mt-3">ГОЛОСОВАНИЕ ЗАВЕРШЕНО</h1>
+        </div>
+    </div>
+</div>
+<script src="vendor/js/moment.min.js"></script>
+<script src="vendor/js/vue.js"></script>
+<script src="vendor/js/vue-router.js"></script>
+<script>
+    const router = new VueRouter({
+        mode: 'history',
+        routes: []
+    });
+    let app = new Vue({
+        router,
+        el: '#app',
+        data: {
+            topic: '',
+            upvote: 0,
+            downvote: 0,
+            neutralvote: 0,
+            isScreen: false,
+            interval: null,
+            finished: false,
+            time: ''
+        },
+        mounted() {
+            this.isScreen = this.$route.query.screen !== undefined;
+            if (this.isScreen)
+                this.interval = setInterval(() => {
+                    this.topic = localStorage.getItem('topic') ?? '';
+                    this.upvote = parseInt(localStorage.getItem('upvote')) ?? 0;
+                    this.downvote = parseInt(localStorage.getItem('downvote')) ?? 0;
+                    this.neutralvote = parseInt(localStorage.getItem('neutralvote')) ?? 0;
+                    this.finished = localStorage.getItem('finished') === "true";
+                    this.time = moment().format("HH:mm:ss");
+                }, 1000);
+            else {
+                localStorage.setItem('topic', "");
+                localStorage.setItem('upvote', "0");
+                localStorage.setItem('downvote', "0");
+                localStorage.setItem('neutralvote', "0");
+                localStorage.setItem('finished', "false");
+            }
+        },
+        beforeDestroy() {
+            if (interval) clearInterval(this.interval);
+        },
+        watch: {
+            topic: (val) => {
+                localStorage.setItem('topic', val);
+            },
+            upvote: (val) => {
+                localStorage.setItem('upvote', val);
+            },
+            downvote: (val) => {
+                localStorage.setItem('downvote', val);
+            },
+            neutralvote: (val) => {
+                localStorage.setItem('neutralvote', val);
+            },
+            finished: (val) => {
+                localStorage.setItem('finished', val);
+            },
+        },
+        computed: {
+            totalvotes: function () {
+                return this.upvote + this.downvote + this.neutralvote;
+            },
+            upvoteperc: function () {
+                return (this.totalvotes !== 0 ? this.upvote / this.totalvotes * 100 : 0).toFixed(2);
+            },
+            downvoteperc: function () {
+                return (this.totalvotes !== 0 ? this.downvote / this.totalvotes * 100 : 0).toFixed(2);
+            },
+            neutralvoteperc: function () {
+                return (this.totalvotes !== 0 ? this.neutralvote / this.totalvotes * 100 : 0).toFixed(2);
+            },
+        }
+    });
+</script>
+</body>
+</html>
