@@ -121,14 +121,31 @@
             topic: (val) => {
                 localStorage.setItem('topic', val);
             },
-            upvote: (val) => {
-                localStorage.setItem('upvote', val);
+            upvote: {
+                handler(val) {
+                    val = parseInt(val);
+                    window.console.log(val);
+                    if (val > 500) val = 500;
+                    this.upvote = val;
+                    localStorage.setItem('upvote', val);
+                },
+                deep: true,
             },
-            downvote: (val) => {
-                localStorage.setItem('downvote', val);
+            downvote: {
+                handler(val) {
+                    val = parseInt(val);
+                    if (val > 500) val = 500;
+                    localStorage.setItem('downvote', val);
+                },
+                deep: true
             },
-            neutralvote: (val) => {
-                localStorage.setItem('neutralvote', val);
+            neutralvote: {
+                handler(val) {
+                    val = parseInt(val);
+                    if (val > 500) this.neutralvote = 500;
+                    localStorage.setItem('neutralvote', val);
+                },
+                deep: true
             },
             finished: (val) => {
                 localStorage.setItem('finished', val);
